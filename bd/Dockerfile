@@ -10,6 +10,3 @@ ENV MYSQL_ROOT_HOST=%
 
 # Copie o script SQL para o diretório de inicialização do MySQL
 COPY script.sql /docker-entrypoint-initdb.d/
-
-# Execute o servidor MySQL em primeiro plano
-CMD ["mysqld"]
