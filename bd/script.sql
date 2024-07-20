@@ -67,7 +67,7 @@ CREATE TABLE produto (
 CREATE TABLE pedido (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT NOT NULL,
-    data_pedido DATE NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (cliente_id) REFERENCES cliente(id)
 );
 
@@ -284,13 +284,13 @@ INSERT INTO produto (nome, descricao, preco, quantidade, categoria) VALUES
 ('Sorvete de Baunilha', 'Bola de sorvete de baunilha.', 5.00, 80, 'Sobremesa');
 
 
-INSERT INTO pedido (cliente_id, data_pedido) VALUES
-(1, '2024-07-19'),
-(2, '2024-07-20'),
-(3, '2024-07-20'),
-(4, '2024-07-20'),
-(5, '2024-07-20'),
-(6, '2024-07-20');
+INSERT INTO pedido (cliente_id) VALUES
+(1),
+(2),
+(3),
+(4),
+(5),
+(6);
 
 
 INSERT INTO item_pedido (pedido_id, produto_id, quantidade) VALUES

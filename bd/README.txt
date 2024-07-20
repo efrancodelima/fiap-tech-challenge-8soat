@@ -25,8 +25,15 @@ docker logs bd-lanchonete
 # Lista os containers existentes na máquina local
 docker ps -a
 
-# Para e remove o container, remove e cria novamente a imagem
+# Para e remove o container
+# Remove e cria novamente a imagem
+# Sobe o container e conecta no mysql pelo terminal
 docker stop bd-lanchonete
 docker rm bd-lanchonete
 docker rmi bd-lanchonete
 docker build -t bd-lanchonete .
+docker-compose up -d
+docker exec -it bd-lanchonete mysql -u user_fiap -p
+password_fiap
+use lanchonete
+select * from pedido
