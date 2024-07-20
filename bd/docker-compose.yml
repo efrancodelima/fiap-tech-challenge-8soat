@@ -1,18 +1,18 @@
 version: '3'
 services:
-  bd-lanchonete:
+  bd_lanchonete:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: bd-lanchonete
+    container_name: bd_lanchonete
     ports:
       - "4567:3306"
       ## A porta 4567 é do host e a 3306 a do container
     volumes:
-      - mysql-data:/var/lib/mysql
+      -   lanchonete_dados:/var/lib/mysql
     command: ["mysqld"]
     env_file:
-      - .env-desenv
+      - .env_desenv
 
 volumes:
-  mysql-data:
+  lanchonete_dados:

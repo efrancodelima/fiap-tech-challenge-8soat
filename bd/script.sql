@@ -286,13 +286,13 @@ INSERT INTO produto (nome, descricao, preco, categoria) VALUES
 ('Sorvete de Baunilha', 'Bola de sorvete de baunilha.', 5.00, 'Sobremesa');
 
 
-INSERT INTO pedido (cliente_id) VALUES
-(1),
-(2),
-(3),
-(4),
-(5),
-(6);
+INSERT INTO pedido (cliente_id, timestamp) VALUES
+(1, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 HOUR)),
+(2, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 HOUR)),
+(3, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 HOUR)),
+(4, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 HOUR)),
+(5, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 HOUR)),
+(6, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 HOUR));
 
 
 INSERT INTO item_pedido (pedido_id, produto_id, quantidade) VALUES
