@@ -122,7 +122,6 @@ CREATE TABLE produto (
     nome VARCHAR(100) NOT NULL,
     descricao TEXT,
     preco DECIMAL(10, 2) NOT NULL,
-    quantidade INT NOT NULL,
     categoria ENUM('Lanche', 'Acompanhamento', 'Bebida', 'Sobremesa') NOT NULL
 );
 
@@ -264,27 +263,27 @@ INSERT INTO telefone (cliente_id, tipo_telefone, principal, ddd, numero) VALUES
 (15, 'Celular', TRUE, '11', '998567890');
 
 
-INSERT INTO produto (nome, descricao, preco, quantidade, categoria) VALUES
-('Hambúrguer Clássico', 'Hambúrguer com carne bovina, queijo, alface, tomate e molho especial.', 15.90, 50, 'Lanche'),
-('Cheeseburger', 'Hambúrguer com carne bovina, queijo cheddar, alface, tomate e picles.', 17.50, 40, 'Lanche'),
-('Sanduíche Natural', 'Sanduíche com pão integral, peito de peru, alface e tomate.', 12.00, 50, 'Lanche'),
-('Wrap de Frango', 'Wrap com frango grelhado, alface, tomate e molho.', 13.00, 50, 'Lanche'),
-('Batata Frita', 'Porção de batata frita crocante.', 8.00, 100, 'Acompanhamento'),
-('Onion Rings', 'Anéis de cebola empanados e fritos.', 10.00, 80, 'Acompanhamento'),
-('Salada Caesar', 'Salada com alface, frango grelhado, croutons e molho Caesar.', 14.00, 30, 'Acompanhamento'),
-('Nuggets de Frango', 'Porção de nuggets de frango.', 9.00, 90, 'Acompanhamento'),
-('Batata Rústica', 'Porção de batata rústica com ervas.', 9.50, 70, 'Acompanhamento'),
-('Refrigerante', 'Lata de refrigerante de 350ml.', 5.00, 200, 'Bebida'),
-('Suco Natural', 'Copo de suco natural de laranja.', 7.00, 150, 'Bebida'),
-('Água Mineral', 'Garrafa de água mineral de 500ml.', 3.00, 300, 'Bebida'),
-('Café Expresso', 'Café expresso quente.', 4.50, 100, 'Bebida'),
-('Chá Gelado', 'Copo de chá gelado com limão.', 6.00, 120, 'Bebida'),
-('Milkshake de Chocolate', 'Milkshake cremoso de chocolate.', 12.00, 60, 'Sobremesa'),
-('Milkshake de Morango', 'Milkshake cremoso de morango.', 12.00, 60, 'Sobremesa'),
-('Torta de Maçã', 'Torta de maçã com massa folhada.', 6.00, 50, 'Sobremesa'),
-('Brownie de Chocolate', 'Brownie de chocolate com nozes.', 7.50, 40, 'Sobremesa'),
-('Salada de Frutas', 'Salada de frutas frescas.', 8.50, 70, 'Sobremesa'),
-('Sorvete de Baunilha', 'Bola de sorvete de baunilha.', 5.00, 80, 'Sobremesa');
+INSERT INTO produto (nome, descricao, preco, categoria) VALUES
+('Hambúrguer Clássico', 'Hambúrguer com carne bovina, queijo, alface, tomate e molho especial.', 15.90, 'Lanche'),
+('Cheeseburger', 'Hambúrguer com carne bovina, queijo cheddar, alface, tomate e picles.', 17.50, 'Lanche'),
+('Sanduíche Natural', 'Sanduíche com pão integral, peito de peru, alface e tomate.', 12.00, 'Lanche'),
+('Wrap de Frango', 'Wrap com frango grelhado, alface, tomate e molho.', 13.00, 'Lanche'),
+('Batata Frita', 'Porção de batata frita crocante.', 8.00, 'Acompanhamento'),
+('Onion Rings', 'Anéis de cebola empanados e fritos.', 10.00, 'Acompanhamento'),
+('Salada Caesar', 'Salada com alface, frango grelhado, croutons e molho Caesar.', 14.00, 'Acompanhamento'),
+('Nuggets de Frango', 'Porção de nuggets de frango.', 9.00, 'Acompanhamento'),
+('Batata Rústica', 'Porção de batata rústica com ervas.', 9.50, 'Acompanhamento'),
+('Refrigerante', 'Lata de refrigerante de 350ml.', 5.00, 'Bebida'),
+('Suco Natural', 'Copo de suco natural de laranja.', 7.00, 'Bebida'),
+('Água Mineral', 'Garrafa de água mineral de 500ml.', 3.00, 'Bebida'),
+('Café Expresso', 'Café expresso quente.', 4.50, 'Bebida'),
+('Chá Gelado', 'Copo de chá gelado com limão.', 6.00, 'Bebida'),
+('Milkshake de Chocolate', 'Milkshake cremoso de chocolate.', 12.00, 'Sobremesa'),
+('Milkshake de Morango', 'Milkshake cremoso de morango.', 12.00, 'Sobremesa'),
+('Torta de Maçã', 'Torta de maçã com massa folhada.', 6.00, 'Sobremesa'),
+('Brownie de Chocolate', 'Brownie de chocolate com nozes.', 7.50, 'Sobremesa'),
+('Salada de Frutas', 'Salada de frutas frescas.', 8.50, 'Sobremesa'),
+('Sorvete de Baunilha', 'Bola de sorvete de baunilha.', 5.00, 'Sobremesa');
 
 
 INSERT INTO pedido (cliente_id) VALUES

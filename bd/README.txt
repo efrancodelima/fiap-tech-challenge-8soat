@@ -23,12 +23,11 @@ docker logs bd-lanchonete
 # Para e remove o container
 # Remove e cria novamente a imagem
 # Sobe o container e acessa o mysql pelo terminal
-docker stop bd-lanchonete
-docker rm bd-lanchonete
-docker rmi bd-lanchonete
-docker build -t bd-lanchonete .
+docker-compose down -v
+docker-compose build --no-cache
 docker-compose up -d
 docker exec -it bd-lanchonete mysql -u user_fiap -p
     password_fiap
     use lanchonete;
     select * from pedido;
+
