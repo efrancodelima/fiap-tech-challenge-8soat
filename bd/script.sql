@@ -1,16 +1,15 @@
 USE lanchonete;
 
-
--- CRIAÇÃO DAS TABELAS
-
 CREATE TABLE cliente (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome_completo VARCHAR(120) NOT NULL,
-    cpf BIGINT NOT NULL,
+    cpf CHAR(11) NOT NULL,
 	data_nascimento DATE NOT NULL,
 	genero ENUM('Feminino', 'Masculino', 'Não binário', 'Não informado') NOT NULL,
     email VARCHAR(50),
-    UNIQUE KEY (cpf)
+    -- A unique key já cria um index para cpf automaticamente
+    UNIQUE KEY (cpf),
+    CHECK (cpf REGEXP '^[0-9]{11}$')
 );
 
 CREATE TABLE telefone (
@@ -24,6 +23,38 @@ CREATE TABLE telefone (
     CHECK (ddd REGEXP '^[0-9]{2}$'),
     CHECK (numero REGEXP '^[0-9]{8,9}$')
 );
+
+-- As triggers abaixo garantem que o cliente tenha no máximo um telefone principal
+
+DELIMITER //
+
+CREATE TRIGGER before_insert_telefone
+BEFORE INSERT ON telefone
+FOR EACH ROW
+BEGIN
+	IF NEW.principal THEN
+		IF (SELECT COUNT(*) FROM telefone WHERE cliente_id = NEW.cliente_id AND principal = TRUE) > 0 THEN
+			SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'O cliente já possui um telefone principal.';
+		END IF;
+	END IF;
+END;
+//
+
+CREATE TRIGGER before_update_telefone
+BEFORE UPDATE ON telefone
+FOR EACH ROW
+BEGIN
+	IF NEW.principal AND OLD.principal = FALSE THEN
+		IF (SELECT COUNT(*) FROM telefone WHERE cliente_id = NEW.cliente_id AND principal = TRUE) > 0 THEN
+			SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'O cliente já possui um telefone principal.';
+		END IF;
+	END IF;
+END;
+//
+
+DELIMITER ;
 
 CREATE TABLE estado (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,9 +72,8 @@ CREATE TABLE municipio (
 CREATE TABLE endereco (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT NOT NULL,
-    -- O campo nome é o nome do endereço
-    -- Permite que o usuário dê um nome personalizado para o endereço cadastrado
-    -- Exemplo: trabalho, casa da sogra, apê em São Paulo, etc.
+    -- O campo nome permite que o usuário dê um nome personalizado para
+    -- o endereço cadastrado, como já é feito em muitas lojas online
     nome VARCHAR(20),
     principal BOOLEAN DEFAULT FALSE NOT NULL,
     cep CHAR(8) NOT NULL,
@@ -54,6 +84,38 @@ CREATE TABLE endereco (
     FOREIGN KEY (cliente_id) REFERENCES cliente(id),
     FOREIGN KEY (municipio_id) REFERENCES municipio(id)
 );
+
+-- As triggers abaixo garantem que o cliente tenha no máximo um endereço principal
+
+DELIMITER //
+
+CREATE TRIGGER before_insert_endereco
+BEFORE INSERT ON endereco
+FOR EACH ROW
+BEGIN
+    IF NEW.principal THEN
+        IF (SELECT COUNT(*) FROM endereco WHERE cliente_id = NEW.cliente_id AND principal = TRUE) > 0 THEN
+			SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'O cliente já possui um endereço principal.';
+		END IF;
+    END IF;
+END;
+//
+
+CREATE TRIGGER before_update_endereco
+BEFORE UPDATE ON endereco
+FOR EACH ROW
+BEGIN
+    IF NEW.principal AND OLD.principal = FALSE THEN
+        IF (SELECT COUNT(*) FROM endereco WHERE cliente_id = NEW.cliente_id AND principal = TRUE) > 0 THEN
+			SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'O cliente já possui um endereço principal.';
+		END IF;
+    END IF;
+END;
+//
+
+DELIMITER ;
 
 CREATE TABLE produto (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -86,65 +148,6 @@ CREATE TABLE fila_pedido (
     situacao ENUM('Recebido', 'Em preparação', 'Pronto','Finalizado') NOT NULL,
     FOREIGN KEY (pedido_id) REFERENCES pedido(id)
 );
-
-
--- TRIGGERS
-
-DELIMITER //
-
-CREATE TRIGGER before_insert_telefone
-BEFORE INSERT ON telefone
-FOR EACH ROW
-BEGIN
-	IF NEW.principal THEN
-		IF (SELECT COUNT(*) FROM telefone WHERE cliente_id = NEW.cliente_id AND principal = TRUE) > 0 THEN
-			SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'O cliente já possui um telefone principal.';
-		END IF;
-	END IF;
-END;
-//
-
-CREATE TRIGGER before_update_telefone
-BEFORE UPDATE ON telefone
-FOR EACH ROW
-BEGIN
-	IF NEW.principal AND OLD.principal = FALSE THEN
-		IF (SELECT COUNT(*) FROM telefone WHERE cliente_id = NEW.cliente_id AND principal = TRUE) > 0 THEN
-			SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'O cliente já possui um telefone principal.';
-		END IF;
-	END IF;
-END;
-//
-
-CREATE TRIGGER before_insert_endereco
-BEFORE INSERT ON endereco
-FOR EACH ROW
-BEGIN
-    IF NEW.principal THEN
-        IF (SELECT COUNT(*) FROM endereco WHERE cliente_id = NEW.cliente_id AND principal = TRUE) > 0 THEN
-			SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'O cliente já possui um endereço principal.';
-		END IF;
-    END IF;
-END;
-//
-
-CREATE TRIGGER before_update_endereco
-BEFORE UPDATE ON endereco
-FOR EACH ROW
-BEGIN
-    IF NEW.principal AND OLD.principal = FALSE THEN
-        IF (SELECT COUNT(*) FROM endereco WHERE cliente_id = NEW.cliente_id AND principal = TRUE) > 0 THEN
-			SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'O cliente já possui um endereço principal.';
-		END IF;
-    END IF;
-END;
-//
-
-DELIMITER ;
 
 
 -- PRIVILEGES
@@ -204,21 +207,21 @@ INSERT INTO municipio (nome, estado_id) VALUES
 
 
 INSERT INTO cliente (nome_completo, cpf, data_nascimento, genero, email) VALUES
-('Ana Silva', 12345678901, '1985-05-15', 'Feminino', 'ana.silva@example.com'),
-('Bruno Souza', 23456789012, '1990-07-20', 'Masculino', 'bruno.souza@example.com'),
-('Carla Pereira', 34567890123, '1978-03-10', 'Feminino', 'carla.pereira@example.com'),
-('Daniel Oliveira', 45678901234, '1982-11-25', 'Masculino', 'daniel.oliveira@example.com'),
-('Eduarda Lima', 56789012345, '1995-01-30', 'Feminino', 'eduarda.lima@example.com'),
-('Felipe Costa', 67890123456, '1988-09-05', 'Masculino', 'felipe.costa@example.com'),
-('Gabriela Santos', 78901234567, '1992-06-18', 'Não binário', 'gabriela.santos@example.com'),
-('Henrique Almeida', 89012345678, '1980-12-12', 'Masculino', 'henrique.almeida@example.com'),
-('Isabela Rocha', 90123456789, '1987-04-22', 'Feminino', 'isabela.rocha@example.com'),
-('João Mendes', 12345678902, '1993-08-14', 'Masculino', 'joao.mendes@example.com'),
-('Karina Martins', 23456789023, '1984-02-28', 'Feminino', 'karina.martins@example.com'),
-('Lucas Fernandes', 34567890134, '1991-10-07', 'Masculino', 'lucas.fernandes@example.com'),
-('Mariana Ribeiro', 45678901245, '1986-12-19', 'Feminino', 'mariana.ribeiro@example.com'),
-('Nicolas Cardoso', 56789012356, '1994-05-03', 'Não binário', 'nicolas.cardoso@example.com'),
-('Olivia Azevedo', 67890123467, '1989-07-29', 'Não informado', 'olivia.azevedo@example.com');
+('Ana Silva', '12345678901', '1985-05-15', 'Feminino', 'ana.silva@example.com'),
+('Bruno Souza', '23456789012', '1990-07-20', 'Masculino', 'bruno.souza@example.com'),
+('Carla Pereira', '34567890123', '1978-03-10', 'Feminino', 'carla.pereira@example.com'),
+('Daniel Oliveira', '45678901234', '1982-11-25', 'Masculino', 'daniel.oliveira@example.com'),
+('Eduarda Lima', '56789012345', '1995-01-30', 'Feminino', 'eduarda.lima@example.com'),
+('Felipe Costa', '67890123456', '1988-09-05', 'Masculino', 'felipe.costa@example.com'),
+('Gabriela Santos', '78901234567', '1992-06-18', 'Não binário', 'gabriela.santos@example.com'),
+('Henrique Almeida', '89012345678', '1980-12-12', 'Masculino', 'henrique.almeida@example.com'),
+('Isabela Rocha', '90123456789', '1987-04-22', 'Feminino', 'isabela.rocha@example.com'),
+('João Mendes', '12345678902', '1993-08-14', 'Masculino', 'joao.mendes@example.com'),
+('Karina Martins', '23456789023', '1984-02-28', 'Feminino', 'karina.martins@example.com'),
+('Lucas Fernandes', '34567890134', '1991-10-07', 'Masculino', 'lucas.fernandes@example.com'),
+('Mariana Ribeiro', '45678901245', '1986-12-19', 'Feminino', 'mariana.ribeiro@example.com'),
+('Nicolas Cardoso', '56789012356', '1994-05-03', 'Não binário', 'nicolas.cardoso@example.com'),
+('Olivia Azevedo', '67890123467', '1989-07-29', 'Não informado', 'olivia.azevedo@example.com');
 
 
 INSERT INTO endereco (cliente_id, nome, principal, cep, logradouro, complemento, bairro, municipio_id) VALUES

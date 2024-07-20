@@ -5,12 +5,9 @@ services:
     container_name: bd-lanchonete
     ports:
       - "4567:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: lanchonete
-      MYSQL_USER: user_fiap
-      MYSQL_PASSWORD: password_fiap
-      MYSQL_ROOT_HOST: "%"
+      ## A porta 4567 é do host e a 3306 a do container
+    env_file:
+      - .env-desenv
     volumes:
       - mysql-data:/var/lib/mysql
     command: ["mysqld"]
